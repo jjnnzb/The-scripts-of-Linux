@@ -3,7 +3,7 @@
 ################################################   脚本说明 ########################################################
 # 1、功能：自动部署，安装jar服务																																															#			
 # 2、操作方法： sh  deploy.sh   jar包名称   操作方式（clean/monitor/start/stop/restart/install）  配置文件名（prod/test/其他）							    #
-# 3、使用前提要求：创建sshusr用户，根据需要修改eurkea网关地址。jar启动时使用了监控agent，需要根据实际情况替换，或者删除这部分功能				#
+# 3、使用前提要求：创建sshusr用户，根据需要修改eureka网关地址。jar启动时使用了监控agent，需要根据实际情况替换，或者删除这部分功能				#
 # 4、jar包放在 /data/jenkins/work/  下，每次部署更新都要将新包放在这个目录下                                                           													#
 # 5、部署脚本 deploy.sh   放在 /data/jenkins 下 																																									#
 ################################################################################################################
@@ -113,11 +113,11 @@ function check(){
 		do
 			curl -s "http://$EUREKA_IP:8761/eureka/apps/$EUREKA_SERVICE_LOWER/" |grep "$SERVER_IP"  >/dev/null 2>&1
 			if [ $? == 0 ];then
-				echo "Check $JAR_NAME in  Eurkea,SUCCESS！"
+				echo "Check $JAR_NAME in  Eureka,SUCCESS！"
 				break
 			else
 				if [ X$COUNT == X8 ];then
-					echo "Didn't check $JAR_NAME in  Eurkea,Failed !"
+					echo "Didn't check $JAR_NAME in  Eureka,Failed !"
 					exit 1
 				fi
 				sleep 15
@@ -153,8 +153,8 @@ EOF
 }
 
 function EurekaServerDown(){
-		EUREKA_SERVICE=`echo -e $JAR_NAME |awk -F'.jar' '{print $1}'  |tr 'a-z'  'A-Z'`   # eurkea 上服务名
-		EUREKA_SERVICE_LOWER=`echo -e $JAR_NAME |awk -F'.jar' '{print $1}' `   # eurkea 上服务名(小写)
+		EUREKA_SERVICE=`echo -e $JAR_NAME |awk -F'.jar' '{print $1}'  |tr 'a-z'  'A-Z'`   # eureka 上服务名
+		EUREKA_SERVICE_LOWER=`echo -e $JAR_NAME |awk -F'.jar' '{print $1}' `   # eureka 上服务名(小写)
 		SERVICE_PID=`ps -efww |grep $JAR_NAME |grep -v grep |grep java |awk '{print $2}'`   # 部署服务的pid
 		SERVICE_PORT=`curl -s http://$EUREKA_IP:8761/eureka/apps/$EUREKA_SERVICE_LOWER/  |grep "port enabled"|uniq |awk -F'<|>' '{print $3}'`  # 获取部署服务的端口
 		NUM_SERVICE=`echo -e "$SERVICE_PID"  |wc -l`
@@ -177,7 +177,7 @@ function EurekaServerDown(){
 		elif [ "$RESULT_CURL" == 404 ];then
 			echo -e "Can't find $JAR_NAME ,CONTINUE TO INSTALL...！"
 		else
-			echo -e "Search  $JAR_NAME failed in Eurkea !"
+			echo -e "Search  $JAR_NAME failed in Eureka !"
 			exit 1
 		fi
 		
